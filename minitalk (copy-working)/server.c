@@ -6,17 +6,43 @@
 /*   By: dramos-j <dramos-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 13:11:30 by dramos-j          #+#    #+#             */
-/*   Updated: 2024/10/08 17:16:37 by dramos-j         ###   ########.fr       */
+/*   Updated: 2024/10/08 17:03:54 by dramos-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
+static int	g_len = 0;
+
+void	handler_len(int signum)
+{
+	static int	temp_len = 0;
+	static int	bit = 0;
+
+	if (signum == SIGUSR1)
+		temp_len = (temp_len << 1) | 1;
+	else
+		temp_len = (temp_len << 1);
+	bit++;
+	if (bit == 32)
+	{
+		g_len = temp_len;
+		if (g_len == 0)
+			g_len = -1;
+		temp_len = 0;
+		bit = 0;
+	}
+}
+
 void	handler(int signum)
 {
 	static char	c = 0;
 	static int	bit = 0;
+	static int	j = 0;
+	static char	*str = NULL;
 
+	if (!str && g_len > 0)
+		str = ft_calloc(g_len + 1, sizeof(char));
 	if (signum == SIGUSR1)
 		c = c << 1 | 1;
 	else
@@ -24,7 +50,20 @@ void	handler(int signum)
 	bit++;
 	if (bit == 8)
 	{
-		ft_printf("%c", c);
+		if (c == '\0')
+		{
+			if (str)
+			{
+				str[j] = '\0';
+				ft_printf("%s\n", str);
+				free(str);
+			}
+			str = NULL;
+			g_len = 0;
+			j = 0;
+		}
+		else
+			str[j++] = c;
 		c = 0;
 		bit = 0;
 	}
@@ -42,8 +81,17 @@ int	main(void)
 	}
 	else
 		ft_printf("PID: %d\n", getpid());
-	signal(SIGUSR1, handler);
-	signal(SIGUSR2, handler);
 	while (1)
-		pause();
+	{
+		if (g_len == 0)
+		{
+			signal(SIGUSR1, handler_len);
+			signal(SIGUSR2, handler_len);
+		}
+		else
+		{
+			signal(SIGUSR1, handler);
+			signal(SIGUSR2, handler);
+		}
+	}
 }
