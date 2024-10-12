@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dramos-j <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dramos-j <dramos-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:12:57 by dramos-j          #+#    #+#             */
-/*   Updated: 2023/10/31 15:29:32 by dramos-j         ###   ########.fr       */
+/*   Updated: 2024/10/12 15:25:18 by dramos-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void*))
 		temp = ft_lstnew(content);
 		if (!temp)
 		{
-			ft_lstclear(&new, del); 
+			ft_lstclear(&new, del);
 			if (content)
 				del(content);
 			return (0);

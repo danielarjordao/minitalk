@@ -6,11 +6,12 @@
 /*   By: dramos-j <dramos-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 12:43:48 by dramos-j          #+#    #+#             */
-/*   Updated: 2024/10/08 17:04:35 by dramos-j         ###   ########.fr       */
+/*   Updated: 2024/10/12 15:29:08 by dramos-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "ft_printf/ft_printf.h"
+#include <signal.h>
 
 void	send_size(int pid, char *message)
 {

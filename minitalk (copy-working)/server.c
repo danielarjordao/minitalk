@@ -6,11 +6,12 @@
 /*   By: dramos-j <dramos-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 13:11:30 by dramos-j          #+#    #+#             */
-/*   Updated: 2024/10/08 17:03:54 by dramos-j         ###   ########.fr       */
+/*   Updated: 2024/10/12 15:37:50 by dramos-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "ft_printf/ft_printf.h"
+#include <signal.h>
 
 static int	g_len = 0;
 
@@ -34,6 +35,15 @@ void	handler_len(int signum)
 	}
 }
 
+char	*last_c(char *str, int j)
+{
+	str[j] = '\0';
+	ft_printf("%s\n", str);
+	free(str);
+	str = NULL;
+	return (str);
+}
+
 void	handler(int signum)
 {
 	static char	c = 0;
@@ -48,17 +58,11 @@ void	handler(int signum)
 	else
 		c = (c << 1);
 	bit++;
-	if (bit == 8)
+	if (bit == 8 && g_len > 0)
 	{
 		if (c == '\0')
 		{
-			if (str)
-			{
-				str[j] = '\0';
-				ft_printf("%s\n", str);
-				free(str);
-			}
-			str = NULL;
+			str = last_c(str, j);
 			g_len = 0;
 			j = 0;
 		}

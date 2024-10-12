@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dramos-j <dramos-j@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: dramos-j <dramos-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 12:43:48 by dramos-j          #+#    #+#             */
-/*   Updated: 2024/10/09 12:17:29 by dramos-j         ###   ########.fr       */
+/*   Updated: 2024/10/12 14:14:59 by dramos-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,54 +25,38 @@ void	send_size(int pid, char *message)
 			kill(pid, SIGUSR1);
 		else
 			kill(pid, SIGUSR2);
-		usleep(200);
+		usleep(1000);
 		i--;
 	}
-}
-
-void	ack_handler(int signum)
-{
-	(void)signum;
 }
 
 void	send_message(int pid, char *message)
 {
 	int	i;
 	int	j;
-	struct sigaction	sa;
 
-	sa.sa_flags = 0;
-	sa.sa_handler = &ack_handler;
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
 	i = 0;
 	while (message[i])
 	{
 		j = 7;
 		while (j >= 0)
 		{
-			if (message[i] & (1 << j))
+			if (((message[i] >> j) & 1) == 1)
 				kill(pid, SIGUSR1);
 			else
 				kill(pid, SIGUSR2);
-			usleep(200);
+			usleep(1000);
 			j--;
 		}
 		i++;
-		pause();
 	}
 	j = 7;
 	while (j >= 0)
 	{
 		kill(pid, SIGUSR2);
-		usleep(200);
+		usleep(100);
 		j--;
 	}
-}
-
-void	handler_client(int signum)
-{
-	(void)signum;
 }
 
 int	main(int argc, char **argv)
@@ -81,8 +65,12 @@ int	main(int argc, char **argv)
 
 	if (argc == 3)
 	{
-		pid = ft_atoi(argv[1]);send_size(pid, argv[2]);
-		send_message(pid, argv[2]);
+		pid = ft_atoi(argv[1]);
+		if (pid > 0)
+		{
+			send_size(pid, argv[2]);
+			send_message(pid, argv[2]);
+		}
 	}
 	else
 		ft_printf("Usage: ./client [PID] [message]\n");
