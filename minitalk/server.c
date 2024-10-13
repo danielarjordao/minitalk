@@ -6,15 +6,16 @@
 /*   By: dramos-j <dramos-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 13:11:30 by dramos-j          #+#    #+#             */
-/*   Updated: 2024/10/12 14:57:45 by dramos-j         ###   ########.fr       */
+/*   Updated: 2024/10/13 18:27:53 by dramos-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "ft_printf/ft_printf.h"
+#include <signal.h>
 
 static int	g_len = 0;
 
-static void	handler_len(int signum)
+void	handler_len(int signum)
 {
 	static int	temp_len = 0;
 	static int	bit = 0;
@@ -34,7 +35,16 @@ static void	handler_len(int signum)
 	}
 }
 
-static void	handler(int signum)
+char	*last_c(char *str, int j)
+{
+	str[j] = '\0';
+	ft_printf("%s\n", str);
+	free(str);
+	str = NULL;
+	return (str);
+}
+
+void	handler(int signum)
 {
 	static char	c = 0;
 	static int	bit = 0;
@@ -48,17 +58,11 @@ static void	handler(int signum)
 	else
 		c = (c << 1);
 	bit++;
-	if (bit == 8)
+	if (bit == 8 && g_len > 0)
 	{
 		if (c == '\0')
 		{
-			if (str)
-			{
-				str[j] = '\0';
-				ft_printf("%s\n", str);
-				free(str);
-			}
-			str = NULL;
+			str = last_c(str, j);
 			g_len = 0;
 			j = 0;
 		}
@@ -72,17 +76,7 @@ static void	handler(int signum)
 int	main(void)
 {
 	int	pid;
-	struct sigaction	sa_len;
-	struct sigaction	sa;
 
-	sa_len.sa_handler = &handler_len;
-	sa_len.sa_flags = 0;
-	sigaction(SIGUSR1, &sa_len, NULL);
-	sigaction(SIGUSR2, &sa_len, NULL);
-	sa.sa_handler = &handler;
-	sa.sa_flags = 0;
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
 	pid = getpid();
 	if (pid < 0)
 	{
@@ -92,6 +86,17 @@ int	main(void)
 	else
 		ft_printf("PID: %d\n", getpid());
 	while (1)
+	{
+		if (g_len == 0)
+		{
+			signal(SIGUSR1, handler_len);
+			signal(SIGUSR2, handler_len);
+		}
+		else
+		{
+			signal(SIGUSR1, handler);
+			signal(SIGUSR2, handler);
+		}
 		pause();
-	return (0);
+	}
 }

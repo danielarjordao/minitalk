@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dramos-j <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: dramos-j <dramos-j@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 16:09:09 by dramos-j          #+#    #+#             */
-/*   Updated: 2023/11/18 17:45:19 by dramos-j         ###   ########.fr       */
+/*   Updated: 2024/10/12 15:24:53 by dramos-j         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	ft_putnbr(unsigned long nb, unsigned int base, char c)
 		ft_putchar(nb - 10 + 'a');
 	else if (nb > 9 && c == 'X')
 		ft_putchar(nb - 10 + 'A');
-	else 
+	else
 		ft_putchar(nb + '0');
 	return (i);
 }
